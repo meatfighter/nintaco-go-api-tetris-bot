@@ -9,36 +9,40 @@ func newInt2D(width, height int) [][]int {
 	return a
 }
 
-type playfieldUtil struct {
+// PlayfieldUtil ...
+type PlayfieldUtil struct {
 	spareRows    [][]int
 	columnDepths []int
 	spareIndex   int
 }
 
-func newPlayfieldUtil() *playfieldUtil {
-	p := &playfieldUtil{
-		spareRows:    newInt2D(playfieldWidth+1, 8*tetriminosSearched),
-		columnDepths: make([]int, playfieldWidth),
+// NewPlayfieldUtil ...
+func NewPlayfieldUtil() *PlayfieldUtil {
+	p := &PlayfieldUtil{
+		spareRows:    newInt2D(PlayfieldWidth+1, 8*TetriminosSearched),
+		columnDepths: make([]int, PlayfieldWidth),
 	}
 	for y := 0; y < len(p.spareRows); y++ {
-		for x := 0; x < playfieldWidth; x++ {
+		for x := 0; x < PlayfieldWidth; x++ {
 			p.spareRows[y][x] = tetriminoNone
 		}
 	}
 	return p
 }
 
-func (p *playfieldUtil) createPlayfield() [][]int {
-	playfield := newInt2D(playfieldWidth+1, playfieldHeight)
-	for y := 0; y < playfieldHeight; y++ {
-		for x := 0; x < playfieldWidth; x++ {
+// CreatePlayfield ...
+func (p *PlayfieldUtil) CreatePlayfield() [][]int {
+	playfield := newInt2D(PlayfieldWidth+1, PlayfieldHeight)
+	for y := 0; y < PlayfieldHeight; y++ {
+		for x := 0; x < PlayfieldWidth; x++ {
 			playfield[y][x] = tetriminoNone
 		}
 	}
 	return playfield
 }
 
-func (p *playfieldUtil) lockTetrimino(playfield [][]int, tetriminoType int, s *State) {
+// LockTetrimino ...
+func (p *PlayfieldUtil) LockTetrimino(playfield [][]int, tetriminoType int, s *State) {
 
 	squares := orientations[tetriminoType][s.rotation].squares
 	for i := 0; i < 4; i++ {
@@ -46,7 +50,7 @@ func (p *playfieldUtil) lockTetrimino(playfield [][]int, tetriminoType int, s *S
 		y := s.y + square.y
 		if y >= 0 {
 			playfield[y][s.x+square.x] = tetriminoType
-			playfield[y][playfieldWidth]++
+			playfield[y][PlayfieldWidth]++
 		}
 	}
 
@@ -56,30 +60,31 @@ func (p *playfieldUtil) lockTetrimino(playfield [][]int, tetriminoType int, s *S
 	if startRow < 1 {
 		startRow = 1
 	}
-	if endRow >= playfieldHeight {
-		endRow = playfieldHeight - 1
+	if endRow >= PlayfieldHeight {
+		endRow = PlayfieldHeight - 1
 	}
 
 	for y := startRow; y <= endRow; y++ {
-		if playfield[y][playfieldWidth] == playfieldWidth {
+		if playfield[y][PlayfieldWidth] == PlayfieldWidth {
 			clearedRow := playfield[y]
 			for i := y; i > 0; i-- {
 				playfield[i] = playfield[i-1]
 			}
-			for x := 0; x < playfieldWidth; x++ {
+			for x := 0; x < PlayfieldWidth; x++ {
 				clearedRow[x] = tetriminoNone
 			}
-			clearedRow[playfieldWidth] = 0
+			clearedRow[PlayfieldWidth] = 0
 			playfield[0] = clearedRow
 		}
 	}
 }
 
-func (p *playfieldUtil) evaluatePlayfield(playfield [][]int, e *playfieldEvaluation) {
+// EvaluatePlayfield ...
+func (p *PlayfieldUtil) EvaluatePlayfield(playfield [][]int, e *playfieldEvaluation) {
 
-	for x := 0; x < playfieldWidth; x++ {
-		p.columnDepths[x] = playfieldHeight - 1
-		for y := 0; y < playfieldHeight; y++ {
+	for x := 0; x < PlayfieldWidth; x++ {
+		p.columnDepths[x] = PlayfieldHeight - 1
+		for y := 0; y < PlayfieldHeight; y++ {
 			if playfield[y][x] != tetriminoNone {
 				p.columnDepths[x] = y
 				break
@@ -88,18 +93,18 @@ func (p *playfieldUtil) evaluatePlayfield(playfield [][]int, e *playfieldEvaluat
 	}
 
 	e.wells = 0
-	for x := 0; x < playfieldWidth; x++ {
+	for x := 0; x < PlayfieldWidth; x++ {
 		var minY int
 		if x == 0 {
 			minY = p.columnDepths[1]
-		} else if x == playfieldWidth-1 {
-			minY = p.columnDepths[playfieldWidth-2]
+		} else if x == PlayfieldWidth-1 {
+			minY = p.columnDepths[PlayfieldWidth-2]
 		} else {
 			minY = max(p.columnDepths[x-1], p.columnDepths[x+1])
 		}
 		for y := p.columnDepths[x]; y >= minY; y-- {
 			if (x == 0 || playfield[y][x-1] != tetriminoNone) &&
-				(x == playfieldWidth-1 || playfield[y][x+1] != tetriminoNone) {
+				(x == PlayfieldWidth-1 || playfield[y][x+1] != tetriminoNone) {
 				e.wells++
 			}
 		}
@@ -107,9 +112,9 @@ func (p *playfieldUtil) evaluatePlayfield(playfield [][]int, e *playfieldEvaluat
 
 	e.holes = 0
 	e.columnTransitions = 0
-	for x := 0; x < playfieldWidth; x++ {
+	for x := 0; x < PlayfieldWidth; x++ {
 		solid := true
-		for y := p.columnDepths[x] + 1; y < playfieldHeight; y++ {
+		for y := p.columnDepths[x] + 1; y < PlayfieldHeight; y++ {
 			if playfield[y][x] == tetriminoNone {
 				if playfield[y-1][x] != tetriminoNone {
 					e.holes++
@@ -126,12 +131,12 @@ func (p *playfieldUtil) evaluatePlayfield(playfield [][]int, e *playfieldEvaluat
 	}
 
 	e.rowTransitions = 0
-	for y := 0; y < playfieldHeight; y++ {
+	for y := 0; y < PlayfieldHeight; y++ {
 		solidFound := false
 		solid := true
 		transitions := 0
-		for x := 0; x <= playfieldWidth; x++ {
-			if x == playfieldWidth {
+		for x := 0; x <= PlayfieldWidth; x++ {
+			if x == PlayfieldWidth {
 				if !solid {
 					transitions++
 				}
@@ -156,7 +161,8 @@ func (p *playfieldUtil) evaluatePlayfield(playfield [][]int, e *playfieldEvaluat
 	}
 }
 
-func (p *playfieldUtil) clearRows(playfield [][]int, tetriminoY int) int {
+// ClearRows ...
+func (p *PlayfieldUtil) ClearRows(playfield [][]int, tetriminoY int) int {
 
 	rows := 0
 	startRow := tetriminoY - 2
@@ -165,12 +171,12 @@ func (p *playfieldUtil) clearRows(playfield [][]int, tetriminoY int) int {
 	if startRow < 1 {
 		startRow = 1
 	}
-	if endRow >= playfieldHeight {
-		endRow = playfieldHeight
+	if endRow >= PlayfieldHeight {
+		endRow = PlayfieldHeight
 	}
 
 	for y := startRow; y <= endRow; y++ {
-		if playfield[y][playfieldWidth] == playfieldWidth {
+		if playfield[y][PlayfieldWidth] == PlayfieldWidth {
 			rows++
 			p.clearRow(playfield, y)
 		}
@@ -179,34 +185,35 @@ func (p *playfieldUtil) clearRows(playfield [][]int, tetriminoY int) int {
 	return rows
 }
 
-func (p *playfieldUtil) clearRow(playfield [][]int, y int) {
+func (p *PlayfieldUtil) clearRow(playfield [][]int, y int) {
 	clearedRow := playfield[y]
-	clearedRow[playfieldWidth] = y
+	clearedRow[PlayfieldWidth] = y
 	for i := y; i > 0; i-- {
 		playfield[i] = playfield[i-1]
 	}
 	playfield[0] = p.spareRows[p.spareIndex]
-	playfield[0][playfieldWidth] = 0
+	playfield[0][PlayfieldWidth] = 0
 
 	p.spareRows[p.spareIndex] = clearedRow
 	p.spareIndex++
 }
 
-func (p *playfieldUtil) restoreRow(playfield [][]int) {
+func (p *PlayfieldUtil) restoreRow(playfield [][]int) {
 	p.spareIndex--
 	restoredRow := p.spareRows[p.spareIndex]
-	y := restoredRow[playfieldWidth]
+	y := restoredRow[PlayfieldWidth]
 
 	p.spareRows[p.spareIndex] = playfield[0]
 
 	for i := 0; i < y; i++ {
 		playfield[i] = playfield[i+1]
 	}
-	restoredRow[playfieldWidth] = playfieldWidth
+	restoredRow[PlayfieldWidth] = PlayfieldWidth
 	playfield[y] = restoredRow
 }
 
-func (p *playfieldUtil) restoreRows(playfield [][]int, rows int) {
+// RestoreRows ...
+func (p *PlayfieldUtil) RestoreRows(playfield [][]int, rows int) {
 	for i := 0; i < rows; i++ {
 		p.restoreRow(playfield)
 	}

@@ -2,11 +2,12 @@ package ai
 
 import "math"
 
+// TODO COMMENT
 const (
-	playfieldWidth  = 10
-	playfieldHeight = 20
+	PlayfieldWidth  = 10
+	PlayfieldHeight = 20
 
-	tetriminosSearched = 2
+	TetriminosSearched = 2
 )
 
 var weights = []float64{
@@ -22,7 +23,7 @@ var weights = []float64{
 type AI struct {
 	searchers        []*searcher
 	tetriminoIndices []int
-	playfieldU       *playfieldUtil
+	playfieldU       *PlayfieldUtil
 	e                *playfieldEvaluation
 	totalRows        int
 	totalDropHeight  int
@@ -32,18 +33,20 @@ type AI struct {
 	searchListener   iSearchListener
 }
 
-func newAI() *AI {
-	return newAI2(nil)
+// NewAI ...
+func NewAI() *AI {
+	return NewAI2(nil)
 }
 
-func newAI2(positionValidator iChildFilter) *AI {
+// NewAI2 ...
+func NewAI2(positionValidator iChildFilter) *AI {
 	a := &AI{
-		playfieldU: newPlayfieldUtil(),
+		playfieldU: NewPlayfieldUtil(),
 		e:          newPlayfieldEvaluation(),
 	}
 	a.searchListener = a
-	a.searchers = make([]*searcher, tetriminosSearched)
-	for i := 0; i < tetriminosSearched; i++ {
+	a.searchers = make([]*searcher, TetriminosSearched)
+	for i := 0; i < TetriminosSearched; i++ {
 		a.searchers[i] = newSearcher(a.searchListener, positionValidator)
 	}
 	return a
@@ -55,7 +58,7 @@ func (a *AI) handleResult(playfield [][]int, tetriminoType, id int, s *State) {
 	}
 
 	orientation := orientations[tetriminoType][s.rotation]
-	rows := a.playfieldU.clearRows(playfield, s.y)
+	rows := a.playfieldU.ClearRows(playfield, s.y)
 	originalTotalRows := a.totalRows
 	originalTotalDropHeight := a.totalDropHeight
 	a.totalRows += rows
@@ -65,7 +68,7 @@ func (a *AI) handleResult(playfield [][]int, tetriminoType, id int, s *State) {
 
 	if nextID == len(a.tetriminoIndices) {
 
-		a.playfieldU.evaluatePlayfield(playfield, a.e)
+		a.playfieldU.EvaluatePlayfield(playfield, a.e)
 
 		fitness := a.computeFitness()
 		if fitness < a.bestFitness {
@@ -78,7 +81,7 @@ func (a *AI) handleResult(playfield [][]int, tetriminoType, id int, s *State) {
 
 	a.totalDropHeight = originalTotalDropHeight
 	a.totalRows = originalTotalRows
-	a.playfieldU.restoreRows(playfield, rows)
+	a.playfieldU.RestoreRows(playfield, rows)
 }
 
 func (a *AI) computeFitness() float64 {

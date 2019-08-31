@@ -84,8 +84,8 @@ var orientations = func() [][]*orientation {
 				maxY = max(maxY, p[1])
 			}
 			tetrimino.minX = -minX
-			tetrimino.maxX = playfieldWidth - maxX - 1
-			tetrimino.maxY = playfieldHeight - maxY - 1
+			tetrimino.maxX = PlayfieldWidth - maxX - 1
+			tetrimino.maxY = PlayfieldHeight - maxY - 1
 			tetrimino.orientationID = orientationIDs[idIndex]
 			idIndex++
 		}

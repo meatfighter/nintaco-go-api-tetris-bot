@@ -20,9 +20,9 @@ func newSearcher(searchListener iSearchListener, positionValidator iChildFilter)
 }
 
 func (s *searcher) createStates() {
-	s.states = newState3D(4, playfieldWidth, playfieldHeight)
-	for y := 0; y < playfieldHeight; y++ {
-		for x := 0; x < playfieldWidth; x++ {
+	s.states = newState3D(4, PlayfieldWidth, PlayfieldHeight)
+	for y := 0; y < PlayfieldHeight; y++ {
+		for x := 0; x < PlayfieldWidth; x++ {
 			for rotation := 0; rotation < 4; rotation++ {
 				s.states[y][x][rotation] = newState(x, y, rotation)
 			}
@@ -37,7 +37,7 @@ func (s *searcher) lockTetrimino(playfield [][]int, tetriminoType, id int, stat 
 		y := stat.y + square.y
 		if y >= 0 {
 			playfield[y][stat.x+square.x] = tetriminoType
-			playfield[y][playfieldWidth]++
+			playfield[y][PlayfieldWidth]++
 		}
 	}
 	s.searchListener.handleResult(playfield, tetriminoType, id, stat)
@@ -46,7 +46,7 @@ func (s *searcher) lockTetrimino(playfield [][]int, tetriminoType, id int, stat 
 		y := stat.y + square.y
 		if y >= 0 {
 			playfield[y][stat.x+square.x] = tetriminoNone
-			playfield[y][playfieldWidth]--
+			playfield[y][PlayfieldWidth]--
 		}
 	}
 }
