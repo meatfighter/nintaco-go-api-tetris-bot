@@ -2,11 +2,12 @@ package ai
 
 import "math"
 
+// The playfield dimensions and the number of pieces available.
 const (
-	playfieldWidth  = 10
-	playfieldHeight = 20
+	PlayfieldWidth  = 10
+	PlayfieldHeight = 20
 
-	tetriminosSearched = 2
+	TetriminosSearched = 2
 )
 
 var weights = []float64{
@@ -18,11 +19,11 @@ var weights = []float64{
 	30.18511071927904,
 }
 
-// AI ...
+// AI is artificial intelligence driving the bot.
 type AI struct {
 	searchers        []*searcher
 	tetriminoIndices []int
-	playfieldU       *playfieldUtil
+	playfieldU       *PlayfieldUtil
 	e                *playfieldEvaluation
 	totalRows        int
 	totalDropHeight  int
@@ -32,18 +33,20 @@ type AI struct {
 	searchListener   iSearchListener
 }
 
-func newAI() *AI {
-	return newAI2(nil)
+// NewAI constructs an AI instance.
+func NewAI() *AI {
+	return NewAI2(nil)
 }
 
-func newAI2(positionValidator iChildFilter) *AI {
+// NewAI2 constructs an AI instance with a provided child filter.
+func NewAI2(positionValidator iChildFilter) *AI {
 	a := &AI{
-		playfieldU: newPlayfieldUtil(),
+		playfieldU: NewPlayfieldUtil(),
 		e:          newPlayfieldEvaluation(),
 	}
 	a.searchListener = a
-	a.searchers = make([]*searcher, tetriminosSearched)
-	for i := 0; i < tetriminosSearched; i++ {
+	a.searchers = make([]*searcher, TetriminosSearched)
+	for i := 0; i < TetriminosSearched; i++ {
 		a.searchers[i] = newSearcher(a.searchListener, positionValidator)
 	}
 	return a
@@ -54,18 +57,18 @@ func (a *AI) handleResult(playfield [][]int, tetriminoType, id int, s *State) {
 		a.result0 = s
 	}
 
-	orientation := orientations[tetriminoType][s.rotation]
-	rows := a.playfieldU.clearRows(playfield, s.y)
+	orientation := Orientations[tetriminoType][s.Rotation]
+	rows := a.playfieldU.ClearRows(playfield, s.Y)
 	originalTotalRows := a.totalRows
 	originalTotalDropHeight := a.totalDropHeight
 	a.totalRows += rows
-	a.totalDropHeight += orientation.maxY - s.y
+	a.totalDropHeight += orientation.MaxY - s.Y
 
 	nextID := id + 1
 
 	if nextID == len(a.tetriminoIndices) {
 
-		a.playfieldU.evaluatePlayfield(playfield, a.e)
+		a.playfieldU.EvaluatePlayfield(playfield, a.e)
 
 		fitness := a.computeFitness()
 		if fitness < a.bestFitness {
@@ -78,7 +81,7 @@ func (a *AI) handleResult(playfield [][]int, tetriminoType, id int, s *State) {
 
 	a.totalDropHeight = originalTotalDropHeight
 	a.totalRows = originalTotalRows
-	a.playfieldU.restoreRows(playfield, rows)
+	a.playfieldU.RestoreRows(playfield, rows)
 }
 
 func (a *AI) computeFitness() float64 {
@@ -90,7 +93,7 @@ func (a *AI) computeFitness() float64 {
 		weights[5]*float64(a.e.rowTransitions)
 }
 
-// Search ...
+// Search find the best move to make.
 func (a *AI) Search(playfield [][]int, tetriminoIndices []int) *State {
 
 	a.tetriminoIndices = tetriminoIndices
@@ -102,19 +105,19 @@ func (a *AI) Search(playfield [][]int, tetriminoIndices []int) *State {
 	return a.bestResult
 }
 
-// BuildStatesList ...
+// BuildStatesList reconstructs the button sequence for the best move.
 func (a *AI) BuildStatesList(state *State) []*State {
 	s := state
 	count := 0
 	for s != nil {
 		count++
-		s = s.predecessor
+		s = s.Predecessor
 	}
 	states := make([]*State, count)
 	for state != nil {
 		count--
 		states[count] = state
-		state = state.predecessor
+		state = state.Predecessor
 	}
 	return states
 }

@@ -2,11 +2,6 @@ package ai
 
 import "math"
 
-const (
-	maxInt = int(^uint(0) >> 1)
-	minInt = -maxInt - 1
-)
-
 func max(x, y int) int {
 	if x < y {
 		return y
@@ -21,15 +16,16 @@ func min(x, y int) int {
 	return x
 }
 
+// The pieces.
 const (
-	tetriminoNone = iota - 1
-	tetriminoT
-	tetriminoJ
-	tetriminoZ
-	tetriminoO
-	tetriminoS
-	tetriminoL
-	tetriminoI
+	TetriminoNone = -1
+	TetriminoT    = 0
+	TetriminoJ    = 1
+	TetriminoZ    = 2
+	TetriminoO    = 3
+	TetriminoS    = 4
+	TetriminoL    = 5
+	TetriminoI    = 6
 )
 
 var patterns = [][][][]int{
@@ -64,11 +60,11 @@ var orientationIDs = []int{
 	0x02, 0x03, 0x00, 0x01, 0x07, 0x04, 0x05, 0x06, 0x08, 0x09,
 	0x0A, 0x0B, 0x0C, 0x0E, 0x0F, 0x10, 0x0D, 0x12, 0x11}
 
-var orientations = func() [][]*orientation {
-	o := make([][]*orientation, len(patterns))
+// Orientations is a table of all the possible orientations of the pieces.
+var Orientations = func() [][]*Orientation {
+	o := make([][]*Orientation, len(patterns))
 	for i, idIndex := 0, 0; i < len(patterns); i++ {
-		tetriminos := []*orientation{}
-		o[i] = tetriminos
+		tetriminos := []*Orientation{}
 		for j := 0; j < len(patterns[i]); j++ {
 			tetrimino := newOrientation()
 			tetriminos = append(tetriminos, tetrimino)
@@ -77,18 +73,19 @@ var orientations = func() [][]*orientation {
 			maxY := math.MinInt32
 			for k := 0; k < 4; k++ {
 				p := patterns[i][j][k]
-				tetrimino.squares[k].x = p[0]
-				tetrimino.squares[k].y = p[1]
+				tetrimino.Squares[k].x = p[0]
+				tetrimino.Squares[k].y = p[1]
 				minX = min(minX, p[0])
 				maxX = max(maxX, p[0])
 				maxY = max(maxY, p[1])
 			}
-			tetrimino.minX = -minX
-			tetrimino.maxX = playfieldWidth - maxX - 1
-			tetrimino.maxY = playfieldHeight - maxY - 1
-			tetrimino.orientationID = orientationIDs[idIndex]
+			tetrimino.MinX = -minX
+			tetrimino.MaxX = PlayfieldWidth - maxX - 1
+			tetrimino.MaxY = PlayfieldHeight - maxY - 1
+			tetrimino.OrientationID = orientationIDs[idIndex]
 			idIndex++
 		}
+		o[i] = tetriminos
 	}
 	return o
 }()

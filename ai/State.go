@@ -1,20 +1,21 @@
 package ai
 
-// State ...
+// State describes the position and orientation of a piece as its being dropped.
+// It represents a node in the flood fill search algorithm.
 type State struct {
-	x           int
-	y           int
-	rotation    int
-	visited     int
-	predecessor *State
-	next        *State
+	X           int
+	Y           int
+	Rotation    int
+	Visited     int
+	Predecessor *State
+	Next        *State
 }
 
 func newState(x, y, rotation int) *State {
 	return &State{
-		x:        x,
-		y:        y,
-		rotation: rotation,
+		X:        x,
+		Y:        y,
+		Rotation: rotation,
 	}
 }
 
