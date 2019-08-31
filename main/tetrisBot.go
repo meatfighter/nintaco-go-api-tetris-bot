@@ -54,9 +54,6 @@ func (t *tetrisBot) launch() {
 	t.api.AddFrameListener(nintaco.NewFrameFunc(t.renderFinished))
 	t.api.AddStatusListener(nintaco.NewStatusFunc(t.statusChanged))
 	t.api.Run()
-	p := t.updateScore
-	q := &p
-	fmt.Println(q)
 }
 
 func (t *tetrisBot) apiEnabled() {
