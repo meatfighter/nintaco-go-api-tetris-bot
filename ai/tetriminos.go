@@ -2,11 +2,6 @@ package ai
 
 import "math"
 
-const (
-	maxInt = int(^uint(0) >> 1)
-	minInt = -maxInt - 1
-)
-
 func max(x, y int) int {
 	if x < y {
 		return y
@@ -23,14 +18,14 @@ func min(x, y int) int {
 
 // Tetrimino names ...
 const (
-	TetriminoNone = iota - 1
-	TetriminoT
-	TetriminoJ
-	TetriminoZ
-	TetriminoO
-	TetriminoS
-	TetriminoL
-	TetriminoI
+	TetriminoNone = -1
+	TetriminoT    = 0
+	TetriminoJ    = 1
+	TetriminoZ    = 2
+	TetriminoO    = 3
+	TetriminoS    = 4
+	TetriminoL    = 5
+	TetriminoI    = 6
 )
 
 var patterns = [][][][]int{
@@ -70,7 +65,6 @@ var Orientations = func() [][]*Orientation {
 	o := make([][]*Orientation, len(patterns))
 	for i, idIndex := 0, 0; i < len(patterns); i++ {
 		tetriminos := []*Orientation{}
-		o[i] = tetriminos
 		for j := 0; j < len(patterns[i]); j++ {
 			tetrimino := newOrientation()
 			tetriminos = append(tetriminos, tetrimino)
@@ -91,6 +85,7 @@ var Orientations = func() [][]*Orientation {
 			tetrimino.OrientationID = orientationIDs[idIndex]
 			idIndex++
 		}
+		o[i] = tetriminos
 	}
 	return o
 }()

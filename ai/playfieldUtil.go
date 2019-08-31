@@ -172,7 +172,7 @@ func (p *PlayfieldUtil) ClearRows(playfield [][]int, tetriminoY int) int {
 		startRow = 1
 	}
 	if endRow >= PlayfieldHeight {
-		endRow = PlayfieldHeight
+		endRow = PlayfieldHeight - 1
 	}
 
 	for y := startRow; y <= endRow; y++ {

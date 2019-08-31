@@ -42,18 +42,21 @@ func newTetrisBot(playFast bool) *tetrisBot {
 }
 
 func (t *tetrisBot) launch() {
-	t.api.AddActivateListener(nintaco.ActivateFunc(t.apiEnabled))
-	t.api.AddAccessPointListener(nintaco.AccessPointFunc(t.updateScore),
+	t.api.AddActivateListener(nintaco.NewActivateFunc(t.apiEnabled))
+	t.api.AddAccessPointListener(nintaco.NewAccessPointFunc(t.updateScore),
 		nintaco.AccessPointTypePreExecute, 0x9C35)
-	t.api.AddAccessPointListener(nintaco.AccessPointFunc(t.speedUpDrop),
+	t.api.AddAccessPointListener(nintaco.NewAccessPointFunc(t.speedUpDrop),
 		nintaco.AccessPointTypePreExecute, 0x8977)
-	t.api.AddAccessPointListener(nintaco.AccessPointFunc(t.tetriminoYUpdated),
+	t.api.AddAccessPointListener(nintaco.NewAccessPointFunc(t.tetriminoYUpdated),
 		nintaco.AccessPointTypePreWrite, addressTetriminoY1)
-	t.api.AddAccessPointListener(nintaco.AccessPointFunc(t.tetriminoYUpdated),
+	t.api.AddAccessPointListener(nintaco.NewAccessPointFunc(t.tetriminoYUpdated),
 		nintaco.AccessPointTypePreWrite, addressTetriminoY2)
-	t.api.AddFrameListener(nintaco.FrameFunc(t.renderFinished))
-	t.api.AddStatusListener(nintaco.StatusFunc(t.statusChanged))
+	t.api.AddFrameListener(nintaco.NewFrameFunc(t.renderFinished))
+	t.api.AddStatusListener(nintaco.NewStatusFunc(t.statusChanged))
 	t.api.Run()
+	p := t.updateScore
+	q := &p
+	fmt.Println(q)
 }
 
 func (t *tetrisBot) apiEnabled() {
