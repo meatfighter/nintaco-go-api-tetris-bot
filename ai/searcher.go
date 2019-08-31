@@ -31,21 +31,21 @@ func (s *searcher) createStates() {
 }
 
 func (s *searcher) lockTetrimino(playfield [][]int, tetriminoType, id int, stat *State) {
-	squares := orientations[tetriminoType][stat.rotation].squares
+	squares := Orientations[tetriminoType][stat.Rotation].Squares
 	for i := 0; i < 4; i++ {
 		square := squares[i]
-		y := stat.y + square.y
+		y := stat.Y + square.y
 		if y >= 0 {
-			playfield[y][stat.x+square.x] = tetriminoType
+			playfield[y][stat.X+square.x] = tetriminoType
 			playfield[y][PlayfieldWidth]++
 		}
 	}
 	s.searchListener.handleResult(playfield, tetriminoType, id, stat)
 	for i := 0; i < 4; i++ {
 		square := squares[i]
-		y := stat.y + square.y
+		y := stat.Y + square.y
 		if y >= 0 {
-			playfield[y][stat.x+square.x] = tetriminoNone
+			playfield[y][stat.X+square.x] = TetriminoNone
 			playfield[y][PlayfieldWidth]--
 		}
 	}
@@ -54,21 +54,21 @@ func (s *searcher) lockTetrimino(playfield [][]int, tetriminoType, id int, stat 
 // returns true if the position is valid even if the node is not enqueued
 func (s *searcher) addChild(playfield [][]int, tetriminoType, mark int, stat *State, x, y, rotation int) bool {
 
-	orientation := orientations[tetriminoType][rotation]
-	if x < orientation.minX || x > orientation.maxX || y > orientation.maxY {
+	orientation := Orientations[tetriminoType][rotation]
+	if x < orientation.MinX || x > orientation.MaxX || y > orientation.MaxY {
 		return false
 	}
 
 	childNode := s.states[y][x][rotation]
-	if childNode.visited == mark {
+	if childNode.Visited == mark {
 		return true
 	}
 
-	squares := orientation.squares
+	squares := orientation.Squares
 	for i := 0; i < 4; i++ {
 		square := squares[i]
 		playfieldY := y + square.y
-		if playfieldY >= 0 && playfield[playfieldY][x+square.x] != tetriminoNone {
+		if playfieldY >= 0 && playfield[playfieldY][x+square.x] != TetriminoNone {
 			return false
 		}
 	}
@@ -77,8 +77,8 @@ func (s *searcher) addChild(playfield [][]int, tetriminoType, mark int, stat *St
 		return true
 	}
 
-	childNode.visited = mark
-	childNode.predecessor = stat
+	childNode.Visited = mark
+	childNode.Predecessor = stat
 
 	s.q.enqueue(childNode)
 	return true
@@ -86,7 +86,7 @@ func (s *searcher) addChild(playfield [][]int, tetriminoType, mark int, stat *St
 
 func (s *searcher) search(playfield [][]int, tetriminoType, id int) bool {
 
-	maxRotation := len(orientations[tetriminoType]) - 1
+	maxRotation := len(Orientations[tetriminoType]) - 1
 
 	globalMark++
 	mark := globalMark
@@ -100,26 +100,26 @@ func (s *searcher) search(playfield [][]int, tetriminoType, id int) bool {
 
 		if maxRotation != 0 {
 			var r int
-			if stat.rotation == 0 {
+			if stat.Rotation == 0 {
 				r = maxRotation
 			} else {
-				r = stat.rotation - 1
+				r = stat.Rotation - 1
 			}
-			s.addChild(playfield, tetriminoType, mark, stat, stat.x, stat.y, r)
+			s.addChild(playfield, tetriminoType, mark, stat, stat.X, stat.Y, r)
 			if maxRotation != 1 {
-				if stat.rotation == maxRotation {
+				if stat.Rotation == maxRotation {
 					r = 0
 				} else {
-					r = stat.rotation + 1
+					r = stat.Rotation + 1
 				}
-				s.addChild(playfield, tetriminoType, mark, stat, stat.x, stat.y, r)
+				s.addChild(playfield, tetriminoType, mark, stat, stat.X, stat.Y, r)
 			}
 		}
 
-		s.addChild(playfield, tetriminoType, mark, stat, stat.x-1, stat.y, stat.rotation)
-		s.addChild(playfield, tetriminoType, mark, stat, stat.x+1, stat.y, stat.rotation)
+		s.addChild(playfield, tetriminoType, mark, stat, stat.X-1, stat.Y, stat.Rotation)
+		s.addChild(playfield, tetriminoType, mark, stat, stat.X+1, stat.Y, stat.Rotation)
 
-		if !s.addChild(playfield, tetriminoType, mark, stat, stat.x, stat.y+1, stat.rotation) {
+		if !s.addChild(playfield, tetriminoType, mark, stat, stat.X, stat.Y+1, stat.Rotation) {
 			s.lockTetrimino(playfield, tetriminoType, id, stat)
 		}
 	}

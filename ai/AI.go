@@ -57,12 +57,12 @@ func (a *AI) handleResult(playfield [][]int, tetriminoType, id int, s *State) {
 		a.result0 = s
 	}
 
-	orientation := orientations[tetriminoType][s.rotation]
-	rows := a.playfieldU.ClearRows(playfield, s.y)
+	orientation := Orientations[tetriminoType][s.Rotation]
+	rows := a.playfieldU.ClearRows(playfield, s.Y)
 	originalTotalRows := a.totalRows
 	originalTotalDropHeight := a.totalDropHeight
 	a.totalRows += rows
-	a.totalDropHeight += orientation.maxY - s.y
+	a.totalDropHeight += orientation.MaxY - s.Y
 
 	nextID := id + 1
 
@@ -111,13 +111,13 @@ func (a *AI) BuildStatesList(state *State) []*State {
 	count := 0
 	for s != nil {
 		count++
-		s = s.predecessor
+		s = s.Predecessor
 	}
 	states := make([]*State, count)
 	for state != nil {
 		count--
 		states[count] = state
-		state = state.predecessor
+		state = state.Predecessor
 	}
 	return states
 }

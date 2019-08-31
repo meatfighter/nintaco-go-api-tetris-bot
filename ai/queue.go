@@ -14,10 +14,10 @@ func (q *queue) enqueue(s *State) {
 		q.head = s
 		q.tail = s
 	} else {
-		q.tail.next = s
+		q.tail.Next = s
 		q.tail = s
 	}
-	s.next = nil
+	s.Next = nil
 }
 
 func (q *queue) dequeue() *State {
@@ -27,7 +27,7 @@ func (q *queue) dequeue() *State {
 			q.head = nil
 			q.tail = nil
 		} else {
-			q.head = q.head.next
+			q.head = q.head.Next
 		}
 	}
 	return s

@@ -24,7 +24,7 @@ func NewPlayfieldUtil() *PlayfieldUtil {
 	}
 	for y := 0; y < len(p.spareRows); y++ {
 		for x := 0; x < PlayfieldWidth; x++ {
-			p.spareRows[y][x] = tetriminoNone
+			p.spareRows[y][x] = TetriminoNone
 		}
 	}
 	return p
@@ -35,7 +35,7 @@ func (p *PlayfieldUtil) CreatePlayfield() [][]int {
 	playfield := newInt2D(PlayfieldWidth+1, PlayfieldHeight)
 	for y := 0; y < PlayfieldHeight; y++ {
 		for x := 0; x < PlayfieldWidth; x++ {
-			playfield[y][x] = tetriminoNone
+			playfield[y][x] = TetriminoNone
 		}
 	}
 	return playfield
@@ -44,18 +44,18 @@ func (p *PlayfieldUtil) CreatePlayfield() [][]int {
 // LockTetrimino ...
 func (p *PlayfieldUtil) LockTetrimino(playfield [][]int, tetriminoType int, s *State) {
 
-	squares := orientations[tetriminoType][s.rotation].squares
+	squares := Orientations[tetriminoType][s.Rotation].Squares
 	for i := 0; i < 4; i++ {
 		square := squares[i]
-		y := s.y + square.y
+		y := s.Y + square.y
 		if y >= 0 {
-			playfield[y][s.x+square.x] = tetriminoType
+			playfield[y][s.X+square.x] = tetriminoType
 			playfield[y][PlayfieldWidth]++
 		}
 	}
 
-	startRow := s.y - 2
-	endRow := s.y + 1
+	startRow := s.Y - 2
+	endRow := s.Y + 1
 
 	if startRow < 1 {
 		startRow = 1
@@ -71,7 +71,7 @@ func (p *PlayfieldUtil) LockTetrimino(playfield [][]int, tetriminoType int, s *S
 				playfield[i] = playfield[i-1]
 			}
 			for x := 0; x < PlayfieldWidth; x++ {
-				clearedRow[x] = tetriminoNone
+				clearedRow[x] = TetriminoNone
 			}
 			clearedRow[PlayfieldWidth] = 0
 			playfield[0] = clearedRow
@@ -85,7 +85,7 @@ func (p *PlayfieldUtil) EvaluatePlayfield(playfield [][]int, e *playfieldEvaluat
 	for x := 0; x < PlayfieldWidth; x++ {
 		p.columnDepths[x] = PlayfieldHeight - 1
 		for y := 0; y < PlayfieldHeight; y++ {
-			if playfield[y][x] != tetriminoNone {
+			if playfield[y][x] != TetriminoNone {
 				p.columnDepths[x] = y
 				break
 			}
@@ -103,8 +103,8 @@ func (p *PlayfieldUtil) EvaluatePlayfield(playfield [][]int, e *playfieldEvaluat
 			minY = max(p.columnDepths[x-1], p.columnDepths[x+1])
 		}
 		for y := p.columnDepths[x]; y >= minY; y-- {
-			if (x == 0 || playfield[y][x-1] != tetriminoNone) &&
-				(x == PlayfieldWidth-1 || playfield[y][x+1] != tetriminoNone) {
+			if (x == 0 || playfield[y][x-1] != TetriminoNone) &&
+				(x == PlayfieldWidth-1 || playfield[y][x+1] != TetriminoNone) {
 				e.wells++
 			}
 		}
@@ -115,8 +115,8 @@ func (p *PlayfieldUtil) EvaluatePlayfield(playfield [][]int, e *playfieldEvaluat
 	for x := 0; x < PlayfieldWidth; x++ {
 		solid := true
 		for y := p.columnDepths[x] + 1; y < PlayfieldHeight; y++ {
-			if playfield[y][x] == tetriminoNone {
-				if playfield[y-1][x] != tetriminoNone {
+			if playfield[y][x] == TetriminoNone {
+				if playfield[y-1][x] != TetriminoNone {
 					e.holes++
 				}
 				if solid {
@@ -141,7 +141,7 @@ func (p *PlayfieldUtil) EvaluatePlayfield(playfield [][]int, e *playfieldEvaluat
 					transitions++
 				}
 			} else {
-				if playfield[y][x] == tetriminoNone {
+				if playfield[y][x] == TetriminoNone {
 					if solid {
 						solid = false
 						transitions++
