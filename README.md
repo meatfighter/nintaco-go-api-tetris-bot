@@ -17,4 +17,4 @@ As an experiment, press the Stop Server button on the Program Server Controls wi
 
 Alternatively, from the GAME TYPE menu, select B-TYPE. From the B-TYPE menu, select LEVEL 9 and HEIGHT 5, the most difficult combination. Press Start to see if the AI is up to the task. The Tetris Bot actually provides a convenient way to view all the B-TYPE endings.
 
-To make it play faster, from the command-line, break the program (Ctrl+C). Then launch it again, but this time with an argument: `fast`.
+To make it play faster, from the command-line, break the program (Ctrl+C). Then launch it again with an additional argument: `fast`.
