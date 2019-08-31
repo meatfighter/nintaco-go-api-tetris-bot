@@ -1,6 +1,7 @@
 package ai
 
-// Orientation ...
+// Orientation describes a rotated piece. It includes the coordinates of the squares
+// relative to a central pivot and the range that the piece can move within the playfield.
 type Orientation struct {
 	Squares       []*point
 	MinX          int

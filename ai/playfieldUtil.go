@@ -9,14 +9,14 @@ func newInt2D(width, height int) [][]int {
 	return a
 }
 
-// PlayfieldUtil ...
+// PlayfieldUtil creates and manipulates Tetris playfields.
 type PlayfieldUtil struct {
 	spareRows    [][]int
 	columnDepths []int
 	spareIndex   int
 }
 
-// NewPlayfieldUtil ...
+// NewPlayfieldUtil constructs a PlayfieldUtil
 func NewPlayfieldUtil() *PlayfieldUtil {
 	p := &PlayfieldUtil{
 		spareRows:    newInt2D(PlayfieldWidth+1, 8*TetriminosSearched),
@@ -30,7 +30,7 @@ func NewPlayfieldUtil() *PlayfieldUtil {
 	return p
 }
 
-// CreatePlayfield ...
+// CreatePlayfield makes a playfield.
 func (p *PlayfieldUtil) CreatePlayfield() [][]int {
 	playfield := newInt2D(PlayfieldWidth+1, PlayfieldHeight)
 	for y := 0; y < PlayfieldHeight; y++ {
@@ -41,7 +41,7 @@ func (p *PlayfieldUtil) CreatePlayfield() [][]int {
 	return playfield
 }
 
-// LockTetrimino ...
+// LockTetrimino places a piece into a playfield.
 func (p *PlayfieldUtil) LockTetrimino(playfield [][]int, tetriminoType int, s *State) {
 
 	squares := Orientations[tetriminoType][s.Rotation].Squares
@@ -79,7 +79,7 @@ func (p *PlayfieldUtil) LockTetrimino(playfield [][]int, tetriminoType int, s *S
 	}
 }
 
-// EvaluatePlayfield ...
+// EvaluatePlayfield obtains various metrics describing the playfield.
 func (p *PlayfieldUtil) EvaluatePlayfield(playfield [][]int, e *playfieldEvaluation) {
 
 	for x := 0; x < PlayfieldWidth; x++ {
@@ -161,7 +161,7 @@ func (p *PlayfieldUtil) EvaluatePlayfield(playfield [][]int, e *playfieldEvaluat
 	}
 }
 
-// ClearRows ...
+// ClearRows removes lines from the playfield.
 func (p *PlayfieldUtil) ClearRows(playfield [][]int, tetriminoY int) int {
 
 	rows := 0
@@ -212,7 +212,7 @@ func (p *PlayfieldUtil) restoreRow(playfield [][]int) {
 	playfield[y] = restoredRow
 }
 
-// RestoreRows ...
+// RestoreRows undoes the clear.
 func (p *PlayfieldUtil) RestoreRows(playfield [][]int, rows int) {
 	for i := 0; i < rows; i++ {
 		p.restoreRow(playfield)

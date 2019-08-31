@@ -2,7 +2,7 @@ package ai
 
 import "math"
 
-// TODO COMMENT
+// The playfield dimensions and the number of pieces available.
 const (
 	PlayfieldWidth  = 10
 	PlayfieldHeight = 20
@@ -19,7 +19,7 @@ var weights = []float64{
 	30.18511071927904,
 }
 
-// AI ...
+// AI is artificial intelligence driving the bot.
 type AI struct {
 	searchers        []*searcher
 	tetriminoIndices []int
@@ -33,12 +33,12 @@ type AI struct {
 	searchListener   iSearchListener
 }
 
-// NewAI ...
+// NewAI constructs an AI instance.
 func NewAI() *AI {
 	return NewAI2(nil)
 }
 
-// NewAI2 ...
+// NewAI2 constructs an AI instance with a provided child filter.
 func NewAI2(positionValidator iChildFilter) *AI {
 	a := &AI{
 		playfieldU: NewPlayfieldUtil(),
@@ -93,7 +93,7 @@ func (a *AI) computeFitness() float64 {
 		weights[5]*float64(a.e.rowTransitions)
 }
 
-// Search ...
+// Search find the best move to make.
 func (a *AI) Search(playfield [][]int, tetriminoIndices []int) *State {
 
 	a.tetriminoIndices = tetriminoIndices
@@ -105,7 +105,7 @@ func (a *AI) Search(playfield [][]int, tetriminoIndices []int) *State {
 	return a.bestResult
 }
 
-// BuildStatesList ...
+// BuildStatesList reconstructs the button sequence for the best move.
 func (a *AI) BuildStatesList(state *State) []*State {
 	s := state
 	count := 0

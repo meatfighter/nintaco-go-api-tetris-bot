@@ -1,6 +1,7 @@
 package ai
 
-// State ...
+// State describes the position and orientation of a piece as its being dropped.
+// It represents a node in the flood fill search algorithm.
 type State struct {
 	X           int
 	Y           int
